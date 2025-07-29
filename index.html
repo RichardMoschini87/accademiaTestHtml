@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserisci Todo</title>
+</head>
+
+<body>
+    <script>
+        async function addTodo() {
+            const todoInput = document.getElementById('todo');
+            const todo = todoInput.value.trim();
+
+            const prioritaInput = document.getElementById('priorita');
+            const priorita = prioritaInput.value;
+
+            if (!todo || !priorita) {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Per favore, compila tutti i campi.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const response = await fetch('http://localhost:8082/todo/todo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    descrizione: todo,
+                    priorita: priorita
+                })
+            })
+
+            const message = response.ok ? 'Todo aggiunto con successo!' : 'Errore durante l\'aggiunta del Todo.';
+            const successMessage = document.getElementById('success-message');
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+        }
+    </script>
+
+    <div id="todo-container"
+        style="margin-top: 100px; padding: 5px; text-align: center;border: 2px solid black; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3);">
+        <div style="margin: 10px;">
+            <div style="text-align: left;">
+                <button style="background-color: rgb(98, 167, 98); border-radius: 4px;" onclick="window.location.href='lista.html'">
+                    <h3>Vai alla lista dei Todo</h3>
+                </button>
+            </div>
+            <h3 id="success-message" style="color: green; display: none;"></h3>
+            <h1>Inserisci un nuovo Todo</h1>
+            <label for="todo">Todo:</label>
+            <input type="text" id="todo" name="descrizione" required>
+            <label for="todo">Priorità:</label>
+            <select id="priorita" name="priorita" required>
+                <option value="">Seleziona....</option>
+                <option value="MAJOR">Maggiore</option>
+                <option value="HIGH">Alta</option>
+                <option value="LOW">Bassa</option>
+            </select>
+            <div>
+                <button type="button" style="margin-top: 10px;" onclick="addTodo()">Aggiungi</button>
+            </div>
+            <h5 id="error-message" style="color: red; display: none;"></h5>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserisci Todo</title>
+</head>
+
+<body>
+
+    <script>
+        async function fetchTodos() {
+            const response = await fetch('http://localhost:8082/todo/lista');
+            const todos = await response.json();
+
+
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = ''; // Pulisce la lista esistente
+
+            todos.forEach(todo => {
+                const listItem = document.createElement('li');
+                listItem.style.margin = '10px';
+                listItem.style.padding = '5px';
+                const buttonLi = document.createElement('button');
+                buttonLi.style.marginLeft = '10px';
+                buttonLi.style.backgroundColor = 'red';
+                buttonLi.style.cursor = 'pointer';
+                buttonLi.textContent = 'Elimina';
+                buttonLi.onclick = async () => {
+                    const response = await fetch(`http://localhost:8082/todo/todo/${todo.id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        fetchTodos();
+                    }
+                };
+                listItem.textContent = `${todo.descrizione} - Priorità: ${todo.priorita}`;
+                listItem.appendChild(buttonLi);
+                todoList.appendChild(listItem);
+            });
+        }
+
+        // Carica i Todo all'avvio della pagina
+        fetchTodos();
+    </script>
+    <div id="todo-container"
+        style="margin-top: 100px; padding: 5px; text-align: center;border: 2px solid black; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3);">
+        <div style="margin: 10px;">
+
+            <h2>Lista Todo</h2>
+            <ol style="" id="todo-list">
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>
